@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import { FormWrapper, Input, Button } from '../lib';
 import { GoogleLogin } from 'react-google-login';
 import { CLIENT_ID } from '../../env-var';
+import { useDispatch } from 'react-redux';
+import { loginOrSignin } from '../../reducers/actionCreators';
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,19 +32,55 @@ const NoAccount = styled.button`
 
 export default function Signin(props) {
   const { select } = props;
+  const [givenName, setgivenName] = useState('');
+  const [familyName, setFamilyName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
 
   const responseGoogle = (res) => {
     console.log(res);
+    res.error
+      ? console.log(res.error)
+      : dispatch(loginOrSignin(res.profileObj));
+  };
+
+  const handleChangeInputValue = (setter, e) => {
+    setter(e.target.value);
   };
 
   return (
     <Wrapper>
       <Title>Signin</Title>
       <FormWrapper action=''>
-        <Input style={{ gridRow: 2, gridColumn: '1 / 3' }} type='text' />
-        <Input style={{ gridRow: 3, gridColumn: '1 / 3' }} type='text' />
-        <Input style={{ gridRow: 4, gridColumn: '1 / 3' }} type='text' />
-        <Input style={{ gridRow: 5, gridColumn: '1 / 3' }} type='text' />
+        <Input
+          style={{ gridRow: 3 }}
+          placeholder='prémon'
+          type='text'
+          value={givenName}
+          onChange={(e) => handleChangeInputValue(setgivenName, e)}
+        />
+        <Input
+          style={{ gridRow: 3 }}
+          placeholder='Nom'
+          type='text'
+          value={familyName}
+          onChange={(e) => handleChangeInputValue(setFamilyName, e)}
+        />
+        <Input
+          style={{ gridRow: 4, gridColumn: '1 / 3' }}
+          placeholder='my-email@email.com'
+          type='text'
+          value={email}
+          onChange={(e) => handleChangeInputValue(setEmail, e)}
+        />
+        <Input
+          style={{ gridRow: 5, gridColumn: '1 / 3' }}
+          placeholder='my awesome password...'
+          type='password'
+          value={password}
+          onChange={(e) => handleChangeInputValue(setPassword, e)}
+        />
         <Button style={{ gridRow: 6 }}>valider</Button>
         <GoogleLogin
           render={(renderProps) => (
@@ -52,6 +91,7 @@ export default function Signin(props) {
               onClick={renderProps.onClick}
               disabled={renderProps.disabled}
             >
+              Créer un compte avec{' '}
               <svg width='18' height='18' xmlns='http://www.w3.org/2000/svg'>
                 <g fill='#000' fillRule='evenodd'>
                   <path
@@ -72,8 +112,7 @@ export default function Signin(props) {
                   ></path>
                   <path fill='none' d='M0 0h18v18H0z'></path>
                 </g>
-              </svg>{' '}
-              Login with Google
+              </svg>
             </Button>
           )}
           clientId={CLIENT_ID}

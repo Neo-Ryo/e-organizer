@@ -3,6 +3,8 @@ import { FormWrapper, Button, Input } from '../lib';
 import GoogleLogin from 'react-google-login';
 import { CLIENT_ID } from '../../env-var';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { loginOrSignin } from '../../reducers/actionCreators';
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,14 +30,18 @@ const NoAccount = styled.button`
   cursor: pointer;
 `;
 
-const responseGoogle = (res) => {
-  console.log(res);
-};
-
 export default function Login(props) {
   const { select } = props;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+
+  const responseGoogle = (res) => {
+    console.log(res);
+    res.error
+      ? console.log(res.error)
+      : dispatch(loginOrSignin(res.profileObj));
+  };
 
   const handleChangeInputValue = (setter, e) => {
     setter(e.target.value);
@@ -47,7 +53,7 @@ export default function Login(props) {
       <FormWrapper action=''>
         <Input
           style={{ gridRow: 4, gridColumn: '1 / 3' }}
-          placeholder='myemail@email.com'
+          placeholder='my-email@email.com'
           type='text'
           value={email}
           onChange={(e) => handleChangeInputValue(setEmail, e)}
@@ -69,6 +75,7 @@ export default function Login(props) {
               onClick={renderProps.onClick}
               disabled={renderProps.disabled}
             >
+              Se connecter avec{' '}
               <svg width='18' height='18' xmlns='http://www.w3.org/2000/svg'>
                 <g fill='#000' fillRule='evenodd'>
                   <path
@@ -89,8 +96,7 @@ export default function Login(props) {
                   ></path>
                   <path fill='none' d='M0 0h18v18H0z'></path>
                 </g>
-              </svg>{' '}
-              Login with Google
+              </svg>
             </Button>
           )}
           clientId={CLIENT_ID}

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import Button from '../styled-components/Button';
-import FormWrapper from '../styled-components/FormWrapper';
+import { FormWrapper, Button, Input } from '../lib';
 import GoogleLogin from 'react-google-login';
 import { CLIENT_ID } from '../../env-var';
 import { useState } from 'react';
@@ -21,23 +20,20 @@ const Title = styled.h1`
   /* width: fit-content; */
 `;
 
-const Input = styled.input`
-  background-color: inherit;
+const NoAccount = styled.button`
   color: #effeec;
-  height: 3em;
-  border: 1px solid #effeec;
-  border-radius: 5px;
-  padding: 5px 10px;
-  &:focus {
-    border: 1px solid #112d32;
-  }
+  text-decoration: underline;
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
 `;
 
 const responseGoogle = (res) => {
   console.log(res);
 };
 
-export default function Login() {
+export default function Login(props) {
+  const { select } = props;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -51,7 +47,7 @@ export default function Login() {
       <FormWrapper action=''>
         <Input
           style={{ gridRow: 4, gridColumn: '1 / 3' }}
-          placeholder='amyemail@email.com'
+          placeholder='myemail@email.com'
           type='text'
           value={email}
           onChange={(e) => handleChangeInputValue(setEmail, e)}
@@ -104,6 +100,8 @@ export default function Login() {
           cookiePolicy={'single_host_origin'}
         />
       </FormWrapper>
+
+      <NoAccount onClick={() => select()}>Pas encore de compte?</NoAccount>
     </Wrapper>
   );
 }

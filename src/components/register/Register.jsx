@@ -4,5 +4,10 @@ import Signin from './Signin';
 
 export default function Register() {
   const [login, setLogin] = useState(true);
-  return <div>{login ? <Login /> : <Signin />}</div>;
+  const select = () => {
+    setLogin(!login);
+  };
+  return (
+    <div>{login ? <Login select={select} /> : <Signin select={select} />}</div>
+  );
 }
